@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import { Card, CardImg, CardText, CardBody, CardTitle, Breadcrumb, BreadcrumbItem, Button, Modal, Label, ModalHeader, ModalBody } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import {Control, LocalForm, Errors} from 'react-redux-form';
+import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl';
+
 
 function RenderCampsite({campsite}){
     return (
         <div className="col-md-5 m-1">
             <Card>
-                <CardImg top src={campsite.image} alt={campsite.name} />
+                <CardImg top src={baseUrl + campsite.image} alt={campsite.name} />
                 <CardBody>
                     <CardTitle>{campsite.name}</CardTitle>
                     <CardText>{campsite.description}</CardText>
@@ -28,7 +31,12 @@ function RenderComments({comments, addComment, campsiteId}){
                         <div key={comment.id}>
                                 <p>
                                     {comment.text}<br />
-                                -- {comment.author}, {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}
+                                -- {comment.author},
+                                {new Intl.DateTimeFormat('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: '2-digit'
+                                }).format(new Date(Date.parse(comment.date)))}
                                 </p>
                         </div>
                         )
@@ -40,7 +48,27 @@ function RenderComments({comments, addComment, campsiteId}){
     }
 }
 
-    function CampsiteInfo(props){
+function CampsiteInfo(props) {
+    if (props.isLoading) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <Loading /> 
+                </div>
+            </div>
+            )
+    }
+    if (props.errMess) {
+        return (
+            <div className="container">
+                <div className="row">
+                    <div className="col">
+                        <h4>{ props.errMess }</h4>
+                    </div>
+                </div>
+            </div>
+        )
+    }
         if(props.campsite){
             return (
             <div className="container">
@@ -91,7 +119,7 @@ class CommentForm extends Component {
         })
     }
 
-    handleSubmit(values) {
+    handleSubmit=(values)=> {
         this.toggleModal();
         this.props.addComment(this.props.campsiteId, values.rating, values.author, values.text);
     }
@@ -105,7 +133,7 @@ class CommentForm extends Component {
                         Submit Comment
                     </ModalHeader>
                     <ModalBody>
-                        <LocalForm>
+                        <LocalForm onSubmit={values => this.handleSubmit(values)}>
                             <div className="form-group">
                                 <Label htmlFor="rating">Rating</Label>
                                 <Control.select
@@ -119,7 +147,7 @@ class CommentForm extends Component {
                                     <option>3</option>
                                     <option>4</option>
                                     <option>5</option>
-                                    <option>6</option>
+                                    
                                 </Control.select>
                             </div>
                             <div className="form-group">
