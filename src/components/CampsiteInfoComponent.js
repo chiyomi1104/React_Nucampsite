@@ -4,45 +4,56 @@ import { Link } from 'react-router-dom';
 import {Control, LocalForm, Errors} from 'react-redux-form';
 import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl';
+import { FadeTransform, Fade, Stagger } from 'react-animation-components';
 
 
 function RenderCampsite({campsite}){
     return (
         <div className="col-md-5 m-1">
-            <Card>
-                <CardImg top src={baseUrl + campsite.image} alt={campsite.name} />
-                <CardBody>
-                    <CardTitle>{campsite.name}</CardTitle>
-                    <CardText>{campsite.description}</CardText>
-                </CardBody>
-            </Card>
+        <FadeTransform
+            in
+            transformProps={{
+                exitTransform: 'scale(0.5) translateY(-50%)'
+                }}>
+                <Card>
+                    <CardImg top src={baseUrl + campsite.image} alt={campsite.name} />
+                    <CardBody>
+                        <CardTitle>{campsite.name}</CardTitle>
+                        <CardText>{campsite.description}</CardText>
+                    </CardBody>
+                </Card>
+                
+            </FadeTransform>
         </div>
     )
 }
 
-function RenderComments({comments, addComment, campsiteId}){
+function RenderComments({comments, postComment, campsiteId}){
     if(comments){
         return (
             <div className="col-md-5 m-1">
-                <h4>comments</h4>
-                {
-                    comments.map( comment => {
-                        return (
-                        <div key={comment.id}>
-                                <p>
-                                    {comment.text}<br />
-                                -- {comment.author},
-                                {new Intl.DateTimeFormat('en-US', {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: '2-digit'
-                                }).format(new Date(Date.parse(comment.date)))}
-                                </p>
-                        </div>
+                <h4>Comments</h4>
+                <Stagger in>
+                {comments.map( comment => {
+                    return (
+                        <Fade in key={comment.id}>
+                            <div>
+                                    <p>
+                                        {comment.text}<br />
+                                    -- {comment.author},
+                                    {new Intl.DateTimeFormat('en-US', {
+                                        year: 'numeric',
+                                        month: 'short',
+                                        day: '2-digit'
+                                    }).format(new Date(Date.parse(comment.date)))}
+                                    </p>
+                            </div>
+                        </Fade>
                         )
                     })
                 }
-                <CommentForm campsiteId={campsiteId} addComment={ addComment }/>
+                    <CommentForm campsiteId={campsiteId} postComment={postComment} />
+                     </Stagger>
             </div>
         )
     }
@@ -87,7 +98,7 @@ function CampsiteInfo(props) {
                             campsite={props.campsite} />
                         <RenderComments
                             comments={props.comments}
-                            addComment={props.addComment}
+                            postComment={props.postComment}
                             campsiteId={props.campsite.id}
                         
                         />
@@ -111,6 +122,8 @@ class CommentForm extends Component {
         this.state = {
             isModalOpen: false
         }
+        this.toggleModal = this.toggleModal.bind(this);	
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
     
     toggleModal=()=> {
@@ -121,7 +134,7 @@ class CommentForm extends Component {
 
     handleSubmit=(values)=> {
         this.toggleModal();
-        this.props.addComment(this.props.campsiteId, values.rating, values.author, values.text);
+        this.props.postComment(this.props.campsiteId, values.rating, values.author, values.text);
     }
 
     render() { 

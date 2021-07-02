@@ -31,7 +31,6 @@ class Header extends Component {
         this.toggleModal()
         event.preventDefault()
     }
-
     render() {
         return (
             <React.Fragment>
