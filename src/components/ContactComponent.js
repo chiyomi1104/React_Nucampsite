@@ -1,4 +1,5 @@
-/* eslint-disable camelcase */
+/* eslint-disable camelcase  */
+/* eslint-disable react/jsx-pascal-case  */
 import React, { Component } from 'react'
 import { Breadcrumb, BreadcrumbItem, Button, Label, Col, Row } from 'reactstrap'
 import { Link } from 'react-router-dom'
@@ -208,7 +209,7 @@ class Contact extends Component {
                 <Col md={{ size: 4, offset: 2 }}>
                   <div className='form-check'>
                     <Label check>
-                      <Control.checkbox model='.agree' name='agree' className='form-check-input' />{' '}
+                      <Control.checkbox model='.agree' name='agree' className='form-check-input' />
                       <strong>May we contact you?</strong>
                     </Label>
                   </div>
@@ -229,7 +230,7 @@ class Contact extends Component {
                     model='.feedback'
                     id='feedback'
                     name='feedback'
-                    rows='12'
+                    rows={12}
                     className='form-control'
                   />
                 </Col>
